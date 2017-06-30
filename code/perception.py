@@ -32,15 +32,15 @@ def perception_step(Rover):
         rover_x, rover_y = round(Rover.pos[0]), round(Rover.pos[1])
         navigation_map.map[rover_y, rover_x] = 1e8
         world_navigable_x, world_navigable_y = transform.to_world(*rover_navigable, *Rover.pos, Rover.yaw, 200, 10)
-        navigation_map.add_navigable(world_navigable_x, world_navigable_y)
+        navigation_map.add_navigable(world_navigable_x, world_navigable_y, 200 - rover_navigable[0])
 
         rover_obstacle = transform.image_to_rover(obstacle)
         world_obstacle_x, world_obstacle_y = transform.to_world(*rover_obstacle, *Rover.pos, Rover.yaw, 200, 10)
-        navigation_map.add_obstacle(world_obstacle_x, world_obstacle_y)
+        navigation_map.add_obstacle(world_obstacle_x, world_obstacle_y, 200 - rover_obstacle[0])
 
         navigation_map.update()
-        # Rover.worldmap[:, :, 0] = navigation_map.undiscovered_paths()
-        Rover.worldmap[:, :, 0] = navigation_map.obstacle
+        Rover.worldmap[:, :, 0] = navigation_map.undiscovered_paths()
+        # Rover.worldmap[:, :, 0] = navigation_map.obstacle
         Rover.worldmap[:, :, 1] = navigation_map.rock
         Rover.worldmap[:, :, 2] = navigation_map.navigable
 

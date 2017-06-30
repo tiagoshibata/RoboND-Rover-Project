@@ -21,6 +21,7 @@ def path_to_undiscovered(rover):
     def goal_score(goal):
         # Sort with closest goals last
         dy, dx = goal[0] - rover.pos[1], goal[1] - rover.pos[0]
+        print('Dist {}, angle {}'.format(a_star.distance(rover_yx, goal) ** 2, abs(angle_diff(rover.yaw, 180 / pi * atan2(dy, dx)))))
         return -(a_star.distance(rover_yx, goal) ** 2) - abs(angle_diff(rover.yaw, 180 / pi * atan2(dy, dx)))
 
     y_goal, x_goal = navigation_map.undiscovered_paths().nonzero()
@@ -31,9 +32,11 @@ def path_to_undiscovered(rover):
     if len(goals) and goals[-1] == rover_yx:
         goals.pop()
     while len(goals):
+        blah = goals[-1]
         path = a_star.run(rover_yx, goals.pop(), navigation_map.navigable)
         if path:
             return path
+        print('PATH {}x{} failed'.format(blah[0], blah[1]))
 
 
 def rotate_to_angle(Rover, a):
@@ -142,15 +145,17 @@ def decision_step(Rover):
         if a_star.distance(Rover.pos, Rover.start_pos) < 10:
             print("Done")
             Rover.throttle = Rover.steer = 0
+            Rover.brake = 1
             return Rover
 
     if (stuck >= 20 or Rover.throttle) and abs(Rover.vel) < 0.2:
         stuck += 1
-        if stuck > 60:
+        if stuck > 100:
             stuck = 0
         elif stuck > 40:
             print('Rover stuck - throttle')
             Rover.throttle = -1
+            Rover.brake = 0
             Rover.steer = 0
             return Rover
         elif stuck > 20:
@@ -159,7 +164,8 @@ def decision_step(Rover):
             if Rover.vel > 0.2:
                 Rover.brake = 1
             else:
-                Rover.steer = 15
+                Rover.brake = 0
+                Rover.steer = Rover.steer > 0 and 15 or -15
             return Rover
     else:
         stuck = 0
@@ -190,10 +196,12 @@ def decision_step(Rover):
         if not path:
             start = (round(Rover.start_pos[1]), round(Rover.start_pos[0]))
             rover_yx = (round(Rover.pos[1]), round(Rover.pos[0]))
-            path = a_star.run(rover_yx, start, Rover.navigation_map.navigable)
+            path = a_star.run(rover_yx, start, Rover.navigation_map.real_navigable)
         if path:
             follow_path(Rover, path)
-        frames_to_path_trace = len(path)
+            frames_to_path_trace = len(path)
+        else:
+            frames_to_path_trace = 10
     else:
         follow_wall(Rover, target_yaw is not None and target_yaw or Rover.yaw)
     return Rover

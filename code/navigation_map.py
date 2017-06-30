@@ -7,11 +7,11 @@ class NavigationMap:
         self.reset()
         self.rock = np.zeros((200, 200), dtype=np.float)
 
-    def add_navigable(self, x_list, y_list):
-        self.map[y_list, x_list] += 4 * y_list
+    def add_navigable(self, x_list, y_list, weights):
+        self.map[y_list, x_list] += 8 * weights
 
-    def add_obstacle(self, x_list, y_list):
-        self.map[y_list, x_list] -= y_list
+    def add_obstacle(self, x_list, y_list, weights):
+        self.map[y_list, x_list] -= weights
 
     def add_rock(self, x_list, y_list):
         self.rock[y_list, x_list] += 1
@@ -23,6 +23,9 @@ class NavigationMap:
     def update(self):
         self.navigable = np.zeros((200, 200), dtype=bool)
         self.navigable[self.map > 0] = True
+
+        self.real_navigable = self.navigable.copy()
+        self.real_navigable[self.map > 40000] = False
 
         self.obstacle = np.zeros((200, 200), dtype=bool)
         self.obstacle[self.map < 0] = True

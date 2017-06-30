@@ -37,7 +37,7 @@ class Vision:
         under_thresh = (img[:, :, 0] < low[0]) & (img[:, :, 1] < low[1]) & (img[:, :, 2] < low[2])
         above_thresh = (img[:, :, 0] > high[0]) & (img[:, :, 1] > high[1]) & (img[:, :, 2] > high[2])
         rocks = np.ones_like(img[:, :, 0])
-        rocks[0:img.shape[0] // 2, :] = 0
+        rocks[0:img.shape[0] // 3, :] = 0
         rocks[under_thresh] = 0
         rocks[above_thresh] = 0
         return rocks
@@ -50,15 +50,16 @@ class Vision:
         rock = self.perspective_transform(self.rock_threshold(img))
 
         navigable = self.high_threshold(img, (160, 160, 160))
+
         obstacle = self.perspective_transform(1 - navigable)
-
         navigable = self.perspective_transform(navigable)
-        navigable[0:2 * img.shape[0] // 3, :] = 0
-        navigable[:, :img.shape[1] // 5] = 0
-        navigable[:, -img.shape[1] // 5:] = 0
 
-        obstacle[0:2 * img.shape[0] // 3, :] = 0
-        obstacle[:, :img.shape[1] // 4] = 0
-        obstacle[:, -img.shape[1] // 4:] = 0
+        navigable[0:int(0.7 * img.shape[0]), :] = 0
+        navigable[:, :int(0.35 * img.shape[1])] = 0
+        navigable[:, -int(0.35 * img.shape[1]):] = 0
+
+        obstacle[0:int(0.7 * img.shape[0]), :] = 0
+        obstacle[:, :int(0.35 * img.shape[1])] = 0
+        obstacle[:, -int(0.35 * img.shape[1]):] = 0
 
         return obstacle, rock, navigable
