@@ -336,7 +336,7 @@ The current code is capable of mapping, collecting all samples and returning hom
 
 * **Using the map to trace paths to samples:** The map can be used to move to samples. This would avoid the problem of not collecting samples that have been mapped. The following screenshot, for example, shows a successful run, where the rover collected 5 samples and returned home; however, one samples was seen and mapped, but the rover drove past it and left it behind.
 ![Rover returned home, but one sample was seen and not collected](sample_not_collected.png)
-* **Run A* on a separate thread:** Running A* on a separate thread could run the algorithm while keeping the robot responsive.
+* **Run A*** **on a separate thread:** Running A* on a separate thread could run the algorithm while keeping the robot responsive.
 * **Smarter unstuck method:** When stuck, the robot could use its map to calculate the direction with the least walls and move towards it. This method would be much more reliable than spinning randomly.
 * **Resetting the map if all samples haven't been found:** A possible solution to have an implementation that reliably recovers all samples would be resetting the map it the whole environment has been mapped and some samples haven't been found. This would for the robot to remap the whole environment. If some sample is very well hidden, it would keep remapping until it finds it.
 * **Fine-tune the mapped area x fidelity trade-off:** There is a clear trade-off between mapped area and fidelity, which can be adjusted by changing the mapping process or adjusting its weights. My final submission achieves a high mapped area at decent fidelity (~80%), but during my tests a high fidelity (>90%) could be achieved at the cost of mapped area.
