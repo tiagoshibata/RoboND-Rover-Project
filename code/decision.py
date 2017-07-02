@@ -32,11 +32,11 @@ def path_to_undiscovered(rover):
     if len(goals) and goals[-1] == rover_yx:
         goals.pop()
     while len(goals):
-        blah = goals[-1]
+        tentative = goals[-1]
         path = a_star.run(rover_yx, goals.pop(), navigation_map.navigable)
         if path:
             return path
-        print('PATH {}x{} failed'.format(blah[0], blah[1]))
+        print('PATH {}x{} failed'.format(tentative[0], tentative[1]))
 
 
 def rotate_to_angle(Rover, a):
@@ -140,7 +140,7 @@ def decision_step(Rover):
 
     frames_to_path_trace -= 1
 
-    going_home = Rover.samples_found == Rover.samples_to_find - 1
+    going_home = Rover.samples_found >= Rover.samples_to_find - 1
     if going_home:
         if a_star.distance(Rover.pos, Rover.start_pos) < 10:
             print("Done")
